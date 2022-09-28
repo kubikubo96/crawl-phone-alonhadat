@@ -24,8 +24,8 @@ require("dotenv/config");
         height: 1080,
     });
 
-    //let ID = 792292;
-    let ID = 792270;
+    //let ID = 792299;
+    let ID = 792299;
     while (1) {
         try {
             const urlCrawl = 'https://alonhadat.com.vn/nha-moi-gioi/079-' + ID + '.html';
