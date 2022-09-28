@@ -112,7 +112,7 @@ async function sendTele(error, url = '') {
     html += '<b>[URL] : </b><code>' + url + '</code> \n';
 
     await axios.post(process.env.TELE_URL, {
-        chat_id: '-815598226',
+        chat_id: process.env.TELE_CHAT_ID,
         text: html,
     }).then(function (response) {
     }).catch(function (error) {
