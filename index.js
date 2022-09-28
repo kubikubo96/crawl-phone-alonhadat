@@ -1,3 +1,6 @@
+// import puppeteer from "puppeteer";
+// import axios from "axios";
+// import "dotenv/config";
 const puppeteer = require('puppeteer');
 const axios = require('axios');
 require("dotenv/config");
@@ -49,9 +52,19 @@ require("dotenv/config");
                 continue;
             }
 
-            const name = await page.$eval('.agent-infor .fullname', elm => elm.textContent.trim());
-            const address = await page.$eval('.agent-infor .address', elm => elm.textContent.trim());
+            let name = '';
             let phones = '';
+            let address = '';
+            try {
+                name = await page.$eval('.agent-infor .fullname', elm => elm.textContent.trim());
+            } catch (error) {
+                await sendTele(error, page.url())
+            }
+            try {
+                address = await page.$eval('.agent-infor .address', elm => elm.textContent.trim());
+            } catch (error) {
+                await sendTele(error, page.url())
+            }
             try {
                 phones = await page.evaluate(() => {
                     let elmPhone = document.querySelectorAll('.agent-infor .phone a');
@@ -97,7 +110,7 @@ async function sendPhone(ID = "", name = "", address = "", phones = "", url = ""
     try {
         await axios
             .post(process.env.TELE_URL, {
-                chat_id: '-815598226',
+                chat_id: process.env.TELE_CHAT_ID,
                 text: html,
             })
             .then(function (response) {
