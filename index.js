@@ -1,9 +1,9 @@
-// import puppeteer from "puppeteer";
-// import axios from "axios";
-// import "dotenv/config";
-const puppeteer = require('puppeteer');
-const axios = require('axios');
-require("dotenv/config");
+import puppeteer from "puppeteer";
+import axios from "axios";
+import "dotenv/config";
+// const puppeteer = require('puppeteer');
+// const axios = require('axios');
+// require("dotenv/config");
 
 (async () => {
     const browser = await puppeteer.launch({
@@ -25,7 +25,7 @@ require("dotenv/config");
     });
 
     //let ID = 792299;
-    let ID = 792290;
+    let ID = 792430;
     while (1) {
         try {
             const urlCrawl = 'https://alonhadat.com.vn/nha-moi-gioi/079-' + ID + '.html';
