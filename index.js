@@ -21,8 +21,8 @@ import "dotenv/config";
         height: 1080,
     });
 
-    //let ID = 792299;
-    let ID = 792430;
+    //let ID = 792430;
+    let ID = 792420;
     while (1) {
         try {
             const urlCrawl = 'https://alonhadat.com.vn/nha-moi-gioi/079-' + ID + '.html';
@@ -42,7 +42,7 @@ import "dotenv/config";
 
             //start: kiem tra đã tồn tại
             let currentUrl = page.url();
-            let isFail = true;
+            let isFail = false;
 
             pageError.forEach((item) => {
                 if (item === currentUrl) {
@@ -77,7 +77,7 @@ import "dotenv/config";
                     let temp = [];
 
                     elmPhone.forEach((item, key) => {
-                        temp[key] = item.textContent.replaceAll('.', '').replaceAll(',', '').trim();
+                        temp.push(item.textContent.replaceAll('.', '').replaceAll(',', '').trim())
                     });
 
                     return temp;
@@ -106,10 +106,10 @@ async function sendPhone(ID = "", name = "", address = "", phones = [], url = ""
     html += "<b>[Message] : </b><code>" + "Have a nice day!" + "</code> \n";
     html += "<b>[ID] : </b><code>" + ID + "</code> \n";
     html += "<b>[Name] : </b><code>" + name + "</code> \n";
-    html += "<b>[Address] : </b><code>" + address + "</code> \n";
-    html += "<b>[Phone 1] : </b><code><b>" + phones[0] + "</b></code> \n";
-    html += phones[1] ? "<b>[Phone 2] : </b><code>" + phones[1] + "</code> \n" : "";
-    html += "<b>[URL] : </b><code>" + url + "</code> \n";
+    html += "<b>[Address] : </b><code>" + address + "</code> \n\n";
+    html += "<b>[Phone 1] : </b><b><code><b>" + phones[0] + "</b></code></b>";
+    html += phones[1] ? "\n\n<b>[Phone 2] : </b><code>" + phones[1] + "</code>" : "";
+    html += "\n\n<b>[URL] : </b><code>" + url + "</code> \n";
     html += "<b>[Timestamp] : </b><code>" + timestamp() + "</code> \n";
 
     try {
