@@ -18,10 +18,8 @@ import "dotenv/config";
 
     //let ID = 792430;
     let ID = 792545;
-    let STEP = 0;
     while (1) {
-        console.log('ID: ' + ID + ' - ' + STEP);
-        STEP++;
+        console.log('ID: ' + ID + ' - ' + timestamp());
         try {
             const urlCrawl = 'https://alonhadat.com.vn/nha-moi-gioi/079-' + ID + '.html';
             const pageError = [
