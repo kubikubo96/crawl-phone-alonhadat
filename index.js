@@ -16,11 +16,6 @@ import "dotenv/config";
     });
     const page = await browser.newPage();
 
-    await page.setViewport({
-        width: 1920,
-        height: 1080,
-    });
-
     //let ID = 792430;
     let ID = 792420;
     while (1) {
@@ -36,7 +31,7 @@ import "dotenv/config";
             try {
                 await page.goto(urlCrawl);
             } catch (error) {
-                await sendError(error, page.url())
+                sendError(error, page.url())
             }
 
 
@@ -56,19 +51,9 @@ import "dotenv/config";
             //end: kiểm tra đã tồn tại
 
             //start: lấy số điện thoại
-            let name = '';
             let phones = [];
+            let name = '';
             let address = '';
-            try {
-                name = await page.$eval('.agent-infor .fullname', elm => elm.textContent.trim());
-            } catch (error) {
-                await sendError(error, currentUrl)
-            }
-            try {
-                address = await page.$eval('.agent-infor .address', elm => elm.textContent.trim());
-            } catch (error) {
-                await sendError(error, currentUrl)
-            }
             try {
                 phones = await page.evaluate(() => {
                     let elmPhone = document.querySelectorAll('.agent-infor .phone a');
@@ -83,25 +68,37 @@ import "dotenv/config";
                     return temp;
                 },);
             } catch (error) {
-                await sendError(error, currentUrl)
+                sendError(error, currentUrl)
+            }
+
+            try {
+                name = await page.$eval('.agent-infor .fullname', elm => elm.textContent.trim());
+            } catch (error) {
+                sendError(error, currentUrl)
+            }
+
+            try {
+                address = await page.$eval('.agent-infor .address', elm => elm.textContent.trim());
+            } catch (error) {
+                sendError(error, currentUrl)
             }
             //end: lấy số điện thoại
 
             //start: Kiểm tra xem url có tồn tại không
             try {
-                await sendPhone(ID, name, address, phones, currentUrl);
+                sendPhone(ID, name, address, phones, currentUrl);
                 ID = ID + 1;
             } catch (error) {
-                await sendError(error, currentUrl)
+                sendError(error, currentUrl)
             }
             //end: Kiểm tra xem url có tồn tại không
         } catch (error) {
-            await sendError(error)
+            sendError(error)
         }
     }
 })();
 
-async function sendPhone(ID = "", name = "", address = "", phones = [], url = "") {
+function sendPhone(ID = "", name = "", address = "", phones = [], url = "") {
     let html = "";
     html += "<b>[Message] : </b><code>" + "Have a nice day!" + "</code> \n";
     html += "<b>[ID] : </b><code>" + ID + "</code> \n";
@@ -112,25 +109,20 @@ async function sendPhone(ID = "", name = "", address = "", phones = [], url = ""
     html += "\n\n<b>[URL] : </b><code>" + url + "</code> \n";
     html += "<b>[Timestamp] : </b><code>" + timestamp() + "</code> \n";
 
-    try {
-        await axios
-            .post(process.env.TELE_URL, {
-                chat_id: process.env.TELE_CHAT_ID,
-                text: html,
-            })
-            .then(function (response) {
-            });
-    } catch (error) {
-        //console.log(error);
-    }
+    axios.post(process.env.TELE_URL, {
+        chat_id: process.env.TELE_CHAT_ID,
+        text: html,
+    }).then(function (response) {
+    }).catch(function (error) {
+    });
 }
 
-async function sendError(error, url = '') {
+function sendError(error, url = '') {
     let html = '';
     html += '<b>[Error] : </b><code>' + error + '</code> \n';
     html += '<b>[URL] : </b><code>' + url + '</code> \n';
 
-    await axios.post(process.env.TELE_URL, {
+    axios.post(process.env.TELE_URL, {
         chat_id: process.env.TELE_CHAT_ID_ERROR,
         text: html,
     }).then(function (response) {
