@@ -55,60 +55,62 @@ import "dotenv/config";
             }
             //end: kiểm tra đã tồn tại
 
+            //start: lấy số điện thoại
             let name = '';
-            let phones = '';
+            let phones = [];
             let address = '';
             try {
                 name = await page.$eval('.agent-infor .fullname', elm => elm.textContent.trim());
             } catch (error) {
-                await sendError(error, page.url())
+                await sendError(error, currentUrl)
             }
             try {
                 address = await page.$eval('.agent-infor .address', elm => elm.textContent.trim());
             } catch (error) {
-                await sendError(error, page.url())
+                await sendError(error, currentUrl)
             }
             try {
                 phones = await page.evaluate(() => {
                     let elmPhone = document.querySelectorAll('.agent-infor .phone a');
                     elmPhone = [...elmPhone];
 
-                    let temp = '';
+                    let temp = [];
 
-                    elmPhone.forEach((item) => {
-                        temp = temp + ' \n ' + item.textContent.replaceAll('.', '').replaceAll(',', '').trim();
+                    elmPhone.forEach((item, key) => {
+                        temp[key] = item.textContent.replaceAll('.', '').replaceAll(',', '').trim();
                     });
 
                     return temp;
                 },);
             } catch (error) {
-                await sendError(error, page.url())
+                await sendError(error, currentUrl)
             }
+            //end: lấy số điện thoại
 
-            /**
-             * Kiểm tra xem url có tồn tại không
-             */
-            //await page.waitForTimeout(2000);
+            //start: Kiểm tra xem url có tồn tại không
             try {
-                await sendPhone(ID, name, address, phones, page.url());
+                await sendPhone(ID, name, address, phones, currentUrl);
                 ID = ID + 1;
             } catch (error) {
-                await sendError(error, page.url())
+                await sendError(error, currentUrl)
             }
+            //end: Kiểm tra xem url có tồn tại không
         } catch (error) {
-            await sendError(error, page.url())
+            await sendError(error)
         }
     }
 })();
 
-async function sendPhone(ID = "", name = "", address = "", phones = "", url = "") {
+async function sendPhone(ID = "", name = "", address = "", phones = [], url = "") {
     let html = "";
     html += "<b>[Message] : </b><code>" + "Have a nice day!" + "</code> \n";
     html += "<b>[ID] : </b><code>" + ID + "</code> \n";
     html += "<b>[Name] : </b><code>" + name + "</code> \n";
     html += "<b>[Address] : </b><code>" + address + "</code> \n";
-    html += "<b>[Phone] : </b><code>" + phones + "</code> \n";
+    html += "<b>[Phone 1] : </b><code><b>" + phones[0] + "</b></code> \n";
+    html += phones[1] ? "<b>[Phone 2] : </b><code>" + phones[1] + "</code> \n" : "";
     html += "<b>[URL] : </b><code>" + url + "</code> \n";
+    html += "<b>[Timestamp] : </b><code>" + timestamp() + "</code> \n";
 
     try {
         await axios
@@ -129,9 +131,13 @@ async function sendError(error, url = '') {
     html += '<b>[URL] : </b><code>' + url + '</code> \n';
 
     await axios.post(process.env.TELE_URL, {
-        chat_id: process.env.TELE_CHAT_ID,
+        chat_id: process.env.TELE_CHAT_ID_ERROR,
         text: html,
     }).then(function (response) {
     }).catch(function (error) {
     });
+}
+
+function timestamp() {
+    return new Date().toLocaleString("en-US", {timeZone: "Asia/Ho_Chi_Minh"});
 }
