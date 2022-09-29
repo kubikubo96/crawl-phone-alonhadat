@@ -17,9 +17,8 @@ import "dotenv/config";
     const page = await browser.newPage();
 
     //let ID = 792430;
-    let ID = 792545;
+    let ID = 792558;
     while (1) {
-        console.log('ID: ' + ID + ' - ' + timestamp());
         try {
             const urlCrawl = 'https://alonhadat.com.vn/nha-moi-gioi/079-' + ID + '.html';
             const pageError = [
@@ -30,7 +29,7 @@ import "dotenv/config";
             ];
 
             try {
-                await page.goto(urlCrawl, {timeout: 0});
+                await page.goto(urlCrawl);
             } catch (error) {
                 sendError(error, page.url())
             }
