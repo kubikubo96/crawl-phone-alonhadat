@@ -10,9 +10,6 @@ import "dotenv/config";
         headless: true,
         args: [
             "--disable-site-isolation-trials",
-            "--window-size=1900,1000",
-            "--window-position=3000,0",
-            "--lang=en-US,en",
             "--no-sandbox",
             "--disable-setuid-sandbox",
         ],
@@ -29,28 +26,34 @@ import "dotenv/config";
     while (1) {
         try {
             const urlCrawl = 'https://alonhadat.com.vn/nha-moi-gioi/079-' + ID + '.html';
-            const pageOrigin = [
+            const pageError = [
                 'https://alonhadat.com.vn/nha-moi-gioi.html',
                 'https://alonhadat.com.vn',
                 'https://alonhadat.com.vn/',
+                'https://alonhadat.com.vn/error.aspx?aspxerrorpath=/default.aspx',
             ];
 
             try {
-                //await page.waitForTimeout(2000);
-                await page.goto(urlCrawl, {
-                    //waitUntil: ["networkidle2"],
-                });
+                await page.goto(urlCrawl);
             } catch (error) {
-                await sendTele(error, page.url())
+                await sendError(error, page.url())
             }
 
 
+            //start: kiem tra đã tồn tại
             let currentUrl = page.url();
-            const hasPage = currentUrl !== pageOrigin[0] && currentUrl !== pageOrigin[1] && currentUrl !== pageOrigin[2];
+            let isFail = true;
 
-            if (!hasPage) {
+            pageError.forEach((item) => {
+                if (item === currentUrl) {
+                    isFail = true;
+                }
+            });
+
+            if (isFail) {
                 continue;
             }
+            //end: kiểm tra đã tồn tại
 
             let name = '';
             let phones = '';
@@ -58,12 +61,12 @@ import "dotenv/config";
             try {
                 name = await page.$eval('.agent-infor .fullname', elm => elm.textContent.trim());
             } catch (error) {
-                await sendTele(error, page.url())
+                await sendError(error, page.url())
             }
             try {
                 address = await page.$eval('.agent-infor .address', elm => elm.textContent.trim());
             } catch (error) {
-                await sendTele(error, page.url())
+                await sendError(error, page.url())
             }
             try {
                 phones = await page.evaluate(() => {
@@ -79,7 +82,7 @@ import "dotenv/config";
                     return temp;
                 },);
             } catch (error) {
-                await sendTele(error, page.url())
+                await sendError(error, page.url())
             }
 
             /**
@@ -90,10 +93,10 @@ import "dotenv/config";
                 await sendPhone(ID, name, address, phones, page.url());
                 ID = ID + 1;
             } catch (error) {
-                await sendTele(error, page.url())
+                await sendError(error, page.url())
             }
         } catch (error) {
-            await sendTele(error, page.url())
+            await sendError(error, page.url())
         }
     }
 })();
@@ -120,7 +123,7 @@ async function sendPhone(ID = "", name = "", address = "", phones = "", url = ""
     }
 }
 
-async function sendTele(error, url = '') {
+async function sendError(error, url = '') {
     let html = '';
     html += '<b>[Error] : </b><code>' + error + '</code> \n';
     html += '<b>[URL] : </b><code>' + url + '</code> \n';
