@@ -106,7 +106,7 @@ function sendPhone(ID = "", name = "", address = "", phones = [], url = "") {
     html += "<b>[Phone 1] : </b><b><code><b>" + phones[0] + "</b></code></b>";
     html += phones[1] ? "\n\n<b>[Phone 2] : </b><code>" + phones[1] + "</code>" : "";
     html += "\n\n<b>[URL] : </b><code>" + url + "</code> \n";
-    html += "<b>[Timestamp] : </b><code>" + timestamp() + "</code> \n";
+    html += "<b>[Timestamp] : </b><code>" + new Date().toLocaleString("en-US", {timeZone: "Asia/Ho_Chi_Minh"}) + "</code> \n";
 
     axios.post(process.env.TELE_URL_V1, {
         chat_id: process.env.TELE_CHAT_ID_V1,
@@ -127,8 +127,4 @@ function sendError(error, url = '') {
     }).then(function (response) {
     }).catch(function (error) {
     });
-}
-
-function timestamp() {
-    return new Date().toLocaleString("en-US", {timeZone: "Asia/Ho_Chi_Minh"});
 }

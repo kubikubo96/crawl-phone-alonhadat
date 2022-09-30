@@ -44,7 +44,7 @@ function sendPhone(ID = "", phones = [], url) {
     html += "<b>[Phone 1] : </b><b><code><b>" + phones[0] + "</b></code></b>";
     html += phones[1] ? "\n\n<b>[Phone 2] : </b><code>" + phones[1] + "</code>" : "";
     html += "\n\n<b>[URL] : </b><code>" + url + "</code> \n";
-    html += "<b>[Timestamp] : </b><code>" + timestamp() + "</code> \n";
+    html += "<b>[Timestamp] : </b><code>" + new Date().toLocaleString("en-US", {timeZone: "Asia/Ho_Chi_Minh"}) + "</code> \n";
 
     axios
         .post(process.env.TELE_URL, {
@@ -71,8 +71,4 @@ function sendError(error, url = "") {
         })
         .catch(function (error) {
         });
-}
-
-function timestamp() {
-    return new Date().toLocaleString("en-US", {timeZone: "Asia/Ho_Chi_Minh"});
 }
