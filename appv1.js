@@ -108,7 +108,7 @@ function sendPhone(ID = "", name = "", address = "", phones = [], url = "") {
     html += "\n\n<b>[URL] : </b><code>" + url + "</code> \n";
     html += "<b>[Timestamp] : </b><code>" + timestamp() + "</code> \n";
 
-    axios.post(process.env.TELE_URL, {
+    axios.post(process.env.TELE_URL_V1, {
         chat_id: process.env.TELE_CHAT_ID_V1,
         text: html,
     }).then(function (response) {
