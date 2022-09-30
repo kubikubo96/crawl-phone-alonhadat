@@ -8,92 +8,76 @@ import "dotenv/config";
 (async () => {
     const browser = await puppeteer.launch({
         headless: true,
-        args: [
-            "--disable-site-isolation-trials",
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-        ],
+        args: ["--disable-site-isolation-trials", "--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
 
     //let ID = 792430;
-    let ID = 792573;
+    let ID = 792795;
     while (1) {
+        console.log("ID:" + ID);
         try {
-            const urlCrawl = 'https://alonhadat.com.vn/nha-moi-gioi/079-' + ID + '.html';
-            const pageError = [
-                'https://alonhadat.com.vn/nha-moi-gioi.html',
-                'https://alonhadat.com.vn',
-                'https://alonhadat.com.vn/',
-                'https://alonhadat.com.vn/error.aspx?aspxerrorpath=/default.aspx',
-            ];
+            const urlCrawl = "https://alonhadat.com.vn/nha-moi-gioi/079-" + ID + ".html";
 
-            try {
-                await page.goto(urlCrawl);
-            } catch (error) {
-                sendError(error, page.url())
-            }
+            await axios
+                .get(urlCrawl, {timeout: 500})
+                .then(async () => {
+                    try {
+                        await page.goto(urlCrawl);
+                    } catch (error) {
+                        sendError(error, page.url());
+                    }
 
+                    //start: lấy số điện thoại
+                    let currentUrl = page.url();
+                    let phones = [];
+                    let name = "";
+                    let address = "";
+                    try {
+                        phones = await page.evaluate(() => {
+                            let elmPhone = document.querySelectorAll(".agent-infor .phone a");
+                            elmPhone = [...elmPhone];
 
-            //start: kiem tra đã tồn tại
-            let currentUrl = page.url();
-            let isFail = false;
+                            let temp = [];
 
-            pageError.forEach((item) => {
-                if (item === currentUrl) {
-                    isFail = true;
-                }
-            });
+                            elmPhone.forEach((item, key) => {
+                                temp.push(item.textContent.replaceAll(".", "").replaceAll(",", "").trim());
+                            });
 
-            if (isFail) {
-                continue;
-            }
-            //end: kiểm tra đã tồn tại
+                            return temp;
+                        });
+                    } catch (error) {
+                        sendError(error, currentUrl);
+                    }
 
-            //start: lấy số điện thoại
-            let phones = [];
-            let name = '';
-            let address = '';
-            try {
-                phones = await page.evaluate(() => {
-                    let elmPhone = document.querySelectorAll('.agent-infor .phone a');
-                    elmPhone = [...elmPhone];
+                    if (phones.length === 0) {
+                        return;
+                    }
 
-                    let temp = [];
+                    try {
+                        name = await page.$eval(".agent-infor .fullname", (elm) => elm.textContent.trim());
+                    } catch (error) {
+                        sendError(error, currentUrl);
+                    }
 
-                    elmPhone.forEach((item, key) => {
-                        temp.push(item.textContent.replaceAll('.', '').replaceAll(',', '').trim())
-                    });
+                    try {
+                        address = await page.$eval(".agent-infor .address", (elm) => elm.textContent.trim());
+                    } catch (error) {
+                        sendError(error, currentUrl);
+                    }
+                    //end: lấy số điện thoại
 
-                    return temp;
-                },);
-            } catch (error) {
-                sendError(error, currentUrl)
-            }
-
-            try {
-                name = await page.$eval('.agent-infor .fullname', elm => elm.textContent.trim());
-            } catch (error) {
-                sendError(error, currentUrl)
-            }
-
-            try {
-                address = await page.$eval('.agent-infor .address', elm => elm.textContent.trim());
-            } catch (error) {
-                sendError(error, currentUrl)
-            }
-            //end: lấy số điện thoại
-
-            //start: Kiểm tra xem url có tồn tại không
-            try {
-                sendPhone(ID, name, address, phones, currentUrl);
-                ID = ID + 1;
-            } catch (error) {
-                sendError(error, currentUrl)
-            }
-            //end: Kiểm tra xem url có tồn tại không
+                    try {
+                        sendPhone(ID, name, address, phones, currentUrl);
+                        ID = ID + 1;
+                    } catch (error) {
+                        sendError(error, currentUrl);
+                    }
+                })
+                .catch(() => {
+                });
         } catch (error) {
-            sendError(error)
+            sendError(error);
         }
     }
 })();
@@ -109,25 +93,43 @@ function sendPhone(ID = "", name = "", address = "", phones = [], url = "") {
     html += "\n\n<b>[URL] : </b><code>" + url + "</code> \n";
     html += "<b>[Timestamp] : </b><code>" + timestamp() + "</code> \n";
 
-    axios.post(process.env.TELE_URL, {
-        chat_id: process.env.TELE_CHAT_ID,
-        text: html,
-    }).then(function (response) {
-    }).catch(function (error) {
-    });
+    axios
+        .post(process.env.TELE_URL, {
+            chat_id: process.env.TELE_CHAT_ID,
+            text: html,
+        })
+        .then(function (response) {
+        })
+        .catch(function (error) {
+        });
 }
 
-function sendError(error, url = '') {
-    let html = '';
-    html += '<b>[Error] : </b><code>' + error + '</code> \n';
-    html += '<b>[URL] : </b><code>' + url + '</code> \n';
+function sendError(error, url = "") {
+    let html = "";
+    html += "<b>[Error] : </b><code>" + error + "</code> \n";
+    html += "<b>[URL] : </b><code>" + url + "</code> \n";
 
-    axios.post(process.env.TELE_URL, {
-        chat_id: process.env.TELE_CHAT_ID_ERROR,
-        text: html,
-    }).then(function (response) {
-    }).catch(function (error) {
-    });
+    axios
+        .post(process.env.TELE_URL, {
+            chat_id: process.env.TELE_CHAT_ID_ERROR,
+            text: html,
+        })
+        .then(function (response) {
+        })
+        .catch(function (error) {
+        });
+}
+
+function checkTime() {
+    let start = Date.now();
+    axios
+        .get("https://alonhadat.com.vn/nha-moi-gioi/nhu-7926699.html", {timeout: 500})
+        .then((response) => {
+            console.log("OK diff res:" + (Date.now() - start));
+        })
+        .catch((error) => {
+            console.log("TIMEOUT diff res:" + (Date.now() - start));
+        });
 }
 
 function timestamp() {
