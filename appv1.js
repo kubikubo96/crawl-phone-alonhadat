@@ -109,7 +109,7 @@ function sendPhone(ID = "", name = "", address = "", phones = [], url = "") {
     html += "<b>[Timestamp] : </b><code>" + timestamp() + "</code> \n";
 
     axios.post(process.env.TELE_URL, {
-        chat_id: process.env.TELE_CHAT_ID,
+        chat_id: process.env.TELE_CHAT_ID_V1,
         text: html,
     }).then(function (response) {
     }).catch(function (error) {
