@@ -10,7 +10,7 @@ import "dotenv/config";
         try {
             const urlCrawl = "https://alonhadat.com.vn/nha-moi-gioi/079-" + ID + ".html";
 
-            await axios.get(urlCrawl, {timeout: 500})
+            await axios.get(urlCrawl, {timeout: 250})
                 .then(async (response) => {
                     let content = response.data;
 
