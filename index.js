@@ -40,7 +40,7 @@ import "dotenv/config";
 
                             let temp = [];
 
-                            elmPhone.forEach((item, key) => {
+                            elmPhone.forEach((item) => {
                                 temp.push(item.textContent.replaceAll(".", "").replaceAll(",", "").trim());
                             });
 
