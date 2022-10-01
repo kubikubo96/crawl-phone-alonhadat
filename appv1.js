@@ -100,9 +100,9 @@ import "dotenv/config";
 function sendPhone(ID = "", name = "", address = "", phones = [], url = "") {
     let html = "";
     html += "<b>[Message] : </b><code>" + "Have a nice day!" + "</code> \n";
-    html += "<b>[ID] : </b><code>" + ID + "</code> \n";
-    html += "<b>[Name] : </b><code>" + name + "</code> \n";
-    html += "<b>[Address] : </b><code>" + address + "</code> \n\n";
+    html += "<b>[ID] : </b><code>" + ID + "</code> \n\n";
+    //html += "<b>[Name] : </b><code>" + name + "</code> \n";
+    //html += "<b>[Address] : </b><code>" + address + "</code> \n\n";
     html += "<b>[Phone 1] : </b><b><code><b>" + phones[0] + "</b></code></b>";
     html += phones[1] ? "\n\n<b>[Phone 2] : </b><code>" + phones[1] + "</code>" : "";
     html += "\n\n<b>[URL] : </b><code>" + url + "</code> \n";
