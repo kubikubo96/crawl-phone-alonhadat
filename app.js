@@ -5,7 +5,7 @@ import "dotenv/config";
 // require("dotenv/config");
 
 (async () => {
-    let ID = 792947;
+    let ID = 793618;
     while (1) {
         try {
             const urlCrawl = "https://alonhadat.com.vn/nha-moi-gioi/079-" + ID + ".html";
@@ -21,7 +21,7 @@ import "dotenv/config";
                     while ((match = regexp.exec(content)) !== null) {
                         let temp = match[0];
                         if (temp.length >= 10 && temp.includes(".")) {
-                            phone_numbers.push(temp.replace(".", "").replace(".", "").replace(".", "").trim());
+                            phone_numbers.push(temp.replace(".", "").replace(".", "").replace(".", "").replace("84", "0").trim());
                         }
                     }
 

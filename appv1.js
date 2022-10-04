@@ -16,7 +16,7 @@ import "dotenv/config";
     });
     const page = await browser.newPage();
 
-    let ID = 792947;
+    let ID = 793618;
     while (1) {
         try {
             const urlCrawl = 'https://alonhadat.com.vn/nha-moi-gioi/079-' + ID + '.html';
@@ -61,7 +61,7 @@ import "dotenv/config";
                     let temp = [];
 
                     elmPhone.forEach((item, key) => {
-                        temp.push(item.textContent.replaceAll('.', '').replaceAll(',', '').trim())
+                        temp.push(item.textContent.replaceAll('.', '').replaceAll(',', '').replace("84", "0").trim())
                     });
 
                     return temp;
