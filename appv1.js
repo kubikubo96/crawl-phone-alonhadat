@@ -16,7 +16,7 @@ import "dotenv/config";
     });
     const page = await browser.newPage();
 
-    let ID = 793618;
+    let ID = 794370;
     while (1) {
         try {
             const urlCrawl = 'https://alonhadat.com.vn/nha-moi-gioi/079-' + ID + '.html';
@@ -25,6 +25,7 @@ import "dotenv/config";
                 'https://alonhadat.com.vn',
                 'https://alonhadat.com.vn/',
                 'https://alonhadat.com.vn/error.aspx?aspxerrorpath=/default.aspx',
+                'chrome-error://chromewebdata/',
             ];
 
             try {
@@ -85,8 +86,12 @@ import "dotenv/config";
 
             //start: Kiểm tra xem url có tồn tại không
             try {
-                sendPhone(ID, name, address, phones, currentUrl);
-                ID = ID + 1;
+                if(phones[0]) {
+                    sendPhone(ID, name, address, phones, currentUrl);
+                    ID = ID + 1;
+                } else {
+                    sendError(error, currentUrl)
+                }
             } catch (error) {
                 sendError(error, currentUrl)
             }

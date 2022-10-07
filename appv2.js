@@ -16,7 +16,7 @@ import puppeteer from "puppeteer";
     });
     const page = await browser.newPage();
 
-    let ID = 792843;
+    let ID = 794290;
     while (1) {
         try {
             const urlCrawl = "https://alonhadat.com.vn/nha-moi-gioi/079-" + ID + ".html";
@@ -33,7 +33,7 @@ import puppeteer from "puppeteer";
                     }, content);
 
                     phone_numbers = phone_numbers.map(function (item) {
-                        return item.replace(".", "").replace(".", "").replace(".", "").trim();
+                        return item.replace(".", "").replace(".", "").replace(".", "").replace("84", "0").trim();
                     });
 
                     if (phone_numbers.length > 0) {
